@@ -1,6 +1,6 @@
 # gracestalker_ew200_AY2025_pygame
 # this is a project for my ew200 class
-# it involves a ship and cannons
+# it involves a snake eating apples
 
 # Example file showing a basic pygame "game loop"
 import pygame
