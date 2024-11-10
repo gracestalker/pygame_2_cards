@@ -1,7 +1,6 @@
 import pygame
 import sys
 
-
 # Initialize pygame
 pygame.init()
 
@@ -11,7 +10,7 @@ screen = pygame.display.set_mode((screen_width, screen_height))
 pygame.display.set_caption("Moving Green Square")
 
 # Define the square properties
-square_color = (0, 255, 0)  # Green color
+square_color = (6, 64, 43)  # Green color
 square_size = 10
 square_x, square_y = screen_width // 2, screen_height // 2
 speed = 5  # Speed of movement
@@ -25,8 +24,16 @@ while running:
             pygame.quit()
             sys.exit()
 
-
-
+    # Get keys pressed
+    keys = pygame.key.get_pressed()
+    if keys[pygame.K_LEFT]:
+        square_x -= speed
+    if keys[pygame.K_RIGHT]:
+        square_x += speed
+    if keys[pygame.K_UP]:
+        square_y -= speed
+    if keys[pygame.K_DOWN]:
+        square_y += speed
 
     # Keep the square inside the screen boundaries
     square_x = max(0, min(screen_width - square_size, square_x))

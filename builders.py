@@ -6,6 +6,17 @@ def build_background(width, height):
     background = pygame.Surface((width, height))
     background.fill((0,0,0))
 
+   # prep to get images onto the screen
+    grass = pygame.image.load('assets/tile_0050.png')
+
+    # get the tile size
+    grass_size = grass.get_width() 
+
+    # loop to put image onto screen
+    for x in range(0, width, grass_size):
+        for y in range(0, height, grass_size):
+            background.blit(grass, (x,y))
+
     return background
 
 def update_square_position(x, y, speed):
@@ -34,11 +45,8 @@ class Snake:
 
 
     def snake(self):
-        self.x = 630
-        self.y = 340
-        self.size = 10
-        self.color = (0, 255, 0)
-        self.speed = 5
+        snake = Snake(self)
+        return snake
     
     def keys(self):
         keys = pygame.key.get_pressed()

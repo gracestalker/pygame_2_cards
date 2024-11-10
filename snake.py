@@ -4,9 +4,16 @@ import pygame
 import random
 import builders
 
-
+# all of my variables
+    # screen
 width = 680
 height = 680
+
+    # square
+square_color = (0, 255, 0)  # Green color
+square_size = 10
+square_x, square_y = width // 2, height // 2
+speed = 5  # Speed of movement
 
 
 pygame.display.set_caption("Snake Game")
@@ -28,6 +35,14 @@ while running:
     screen.blit(background,(0,0))
 
     # RENDER YOUR GAME HERE
+
+    square_x = max(0, min(width - square_size, square_x))
+    square_y = max(0, min(height - square_size, square_y))
+
+    builders.Snake.snake()
+    builders.Snake.square()
+
+
 
     # flip() the display to put your work on screen
     pygame.display.flip()
