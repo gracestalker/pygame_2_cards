@@ -19,7 +19,7 @@ running = True
 square_color = (10, 120, 30) # Green Color for Snake
 square_size = 15
 square_x, square_y = width // 2, height // 2
-speed = 5  # Speed of movement
+speed = 1  # Speed of movement
 
 
 while running:
@@ -33,12 +33,16 @@ while running:
     keys = pygame.key.get_pressed()
     if keys[pygame.K_LEFT]:
         square_x -= speed
-    if keys[pygame.K_RIGHT]:
+    elif keys[pygame.K_RIGHT]:
         square_x += speed
-    if keys[pygame.K_UP]:
+    elif keys[pygame.K_UP]:
         square_y -= speed
-    if keys[pygame.K_DOWN]:
+    elif keys[pygame.K_DOWN]:
         square_y += speed
+
+    # Keep the square inside the screen boundaries
+    square_x = max(0, min(width - square_size, square_x))
+    square_y = max(0, min(height - square_size, square_y))
 
 
     # need to blit onto screen in order to see the colors
@@ -46,8 +50,6 @@ while running:
 
     # draw snake onto screen
     pygame.draw.rect(screen, square_color, (square_x, square_y, square_size, square_size))
-
-
 
 
     # flip() the display to put your work on screen
