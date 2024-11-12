@@ -1,25 +1,26 @@
 # make a snake game
-
 import pygame
 import random
 import builders
+from builders import Snake
 
 
+# initial variables
 width = 680
 height = 680
 
-# initial variables
+    #screen
 pygame.display.set_caption("Snake Game")
 screen = pygame.display.set_mode((width, height))
 clock = pygame.time.Clock()
 background = builders.build_background(width, height)
 running = True
 
-# snake variables
+    # snake
 square_color = (10, 120, 30) # Green Color for Snake
 square_size = 15
 square_x, square_y = width // 2, height // 2
-speed = 1  # Speed of movement
+speed = 2  # Speed of movement
 
 
 while running:
@@ -28,8 +29,17 @@ while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
+        elif event.type == pygame.KEYDOWN:
+            if event.type == pygame.K_LEFT:
+                Snake.reverse(-square_size, 0)
+            elif event.type == pygame.K_RIGHT:
+                Snake.reverse(square_size, 0)
+            elif event.type == pygame.K_DOWN:
+                Snake.reverse(0, -square_size)
+            elif event.type == pygame.K_UP:
+                Snake.reverse(0, square_size)
 
-    # keys functions
+        # keys functions
     keys = pygame.key.get_pressed()
     if keys[pygame.K_LEFT]:
         square_x -= speed

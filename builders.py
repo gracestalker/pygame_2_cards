@@ -1,4 +1,5 @@
 import pygame
+import random
 
 
 def build_background(width, height):
@@ -19,62 +20,59 @@ def build_background(width, height):
 
     return background
 
-def update_square_position(x, y, speed):
-        # Get keys pressed
-    keys = pygame.key.get_pressed()
-    if keys[pygame.K_LEFT]:
-        square_x -= speed
-    if keys[pygame.K_RIGHT]:
-        square_x += speed
-    if keys[pygame.K_UP]:
-        square_y -= speed
-    if keys[pygame.K_DOWN]:
-        square_y += speed
-
-    return x, y
 
 class Snake:
-    def __init__(self, x, y, size, color, speed, width, height):
-        self.x = x
-        self.y = y
+    def __init__(self, size, color, width, height, x, y):
         self.size = size
         self.color = color
-        self.speed = speed
-        self.screen_w = width
-        self.screen_h = height
+        self.snake = [(width // 2, height // 2)]
+        self.direction = (0,0)
+        self.x = x
+        self.y = y
 
-
-    def snake(self):
-        snake = Snake(self)
-        return snake
+    def snake_head(self):
+        # update the head of the snake
+        head_x, head_y = self.snake[0]
+        direction_x, direction_y = self.direction
+        update_head = (head_x + direction_x, head_y + direction_y)
+        self.snake = [update_head] + self.snake[:-1]
     
-    def keys(self):
-        keys = pygame.key.get_pressed()
-        if keys[pygame.K_LEFT]:
-            self.x -= self.speed
-        elif keys[pygame.K_RIGHT]:
-            self.x += self.speed
-        elif keys[pygame.K_DOWN]:
-            self.y -= self.speed
-        elif keys[pygame.K_UP]:
-            self.y += self.speed
+    def body(self):
+        # when the snake eats the apple, it adds one part to the BACK of the body
+        self.snake.append(self.snake[-1])
+
+    def reverse(self, direction_x, direction_y):
+        # make sure the snake cannot reverse directions
+        if (direction_x, direction_y) != (-self.direction[0], -self.direction[1]):
+            self.direction = (direction_x, direction_y)
 
 
-    def check_border(self):
-
-        if not border_rect.contains(self.rect):
-            has_collided = pygame.sprite.collide_rect()
-            if has_collided:
-                Snake.kill()
-        # make sure snake stays inside the rect we set as the border
-        border_rect = pygame.rect.Rect(0,0,self.screen_w,self.screen_h)
-        self.rect.clamp_ip(border_rect)
-
+    def check_border(self, width, height):
+        square_x = max(0, min(width - self.size, square_x))
+        square_y = max(0, min(height - self.size, square_y))
+        
+        has_collided = square_x or square_y
+        if has_collided:
+            self.kill()
+    
     def square(self):
         screen = pygame.display.set_mode((self.size))
         pygame.draw.rect(screen, self.color, (self.x, self.y, self.size, self.size))
 
+        return
 
+
+#class Food:
+    def __init__(self, size, position = (0,0), color = (255, 0, 0)):
+        self.position = position
+        self.color = color
+        self.size = size
+        self.spawn()
+
+    def spawn(self, width, height):
+        # makes the food randomly appear on the screen
+        self.position = (random.randint(0, (width - self.size) // self.size) * self.size,
+                        random.randint(0, (height - self.size) // self.size) * self.size)
 
 # when it hits the wall it ends the game and displays your score
 
