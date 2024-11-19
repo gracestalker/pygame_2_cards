@@ -48,6 +48,7 @@ class Snake:
 
 
     def check_border(self, width, height):
+        # the snake cannot leave these bounds
         square_x = max(0, min(width - self.size, square_x))
         square_y = max(0, min(height - self.size, square_y))
         
@@ -55,11 +56,11 @@ class Snake:
         if has_collided:
             self.kill()
     
-    def square(self):
-        screen = pygame.display.set_mode((self.size))
+    def square(self, screen):
         pygame.draw.rect(screen, self.color, (self.x, self.y, self.size, self.size))
 
         return
+    
 
 
 #class Food:
@@ -74,6 +75,6 @@ class Snake:
         self.position = (random.randint(0, (width - self.size) // self.size) * self.size,
                         random.randint(0, (height - self.size) // self.size) * self.size)
 
-# when it hits the wall it ends the game and displays your score
+
 
 
