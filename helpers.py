@@ -46,3 +46,8 @@ def calculate_hand(hand, card_values):
         total -= 10
         aces -= 1
     return total
+
+def result_screen(result, screen, width, height):
+    font = pygame.font.Font(None, 48)
+    result_surface = font.render(result, True, (255,255,255))
+    screen.blit(result_surface, (width // 2 - result_surface.get_width() // 2, height // 2 - 20))

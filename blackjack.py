@@ -39,12 +39,48 @@ def create_deck():
     random.shuffle(deck)
     return deck
 
+def score(player_total, dealer_total):
+
+    pygame.font.init()
+
+    # Initializes score and bet
+    score = 0
+    bet = 0
+
+    # Load chip images
+    red = pygame.image.load('assets/kenney_boardgame-pack/PNG/Chips/chipRedWhite.png')
+    green = pygame.image.load('assets/kenney_boardgame-pack/PNG/Chips/chipGreenWhite.png')
+    blue = pygame.image.load('assets/kenney_boardgame-pack/PNG/Chips/chipBlueWhite.png')
+    chips = {'red': 10, 'green': 50, 'blue': 100}
+
+    # Simulating a bet selection (update logic as per your game)
+    selected_chip = 'red'  # Example selection
+    bet = chips[selected_chip]
+
+    # Calculate the score based on the result
+    if player_total > dealer_total:
+        score += bet
+    elif player_total < dealer_total:
+        score -= bet
+    # No change to the score if player_total == dealer_total
+
+    # Render score text for display
+    font = pygame.font.Font(None, 36)  # Font size 36
+    score_text = font.render(f'Score: {score}', True, (255, 255, 255))
+
+    return score, score_text
+
+
+
+        
+
 
 
 
 # game loop to help shorten code
 def main():
     pygame.init()
+    pygame.font.init()
     screen = pygame.display.set_mode((width, height))
     # caption means game title at the top of the screen
     pygame.display.set_caption("Blackjack")
@@ -84,9 +120,8 @@ def main():
             else:
                 result = "It's a tie!"
 
-            font = pygame.font.Font(None, 48)
-            result_surface = font.render(result, True, (255,255,255))
-            screen.blit(result_surface, (width // 2 - result_surface.get_width() // 2, height // 2 - 20))
+            helpers.result_screen(result, screen, width, height)
+            
 
         # event handling and initializing keys for game
         for event in pygame.event.get():
