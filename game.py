@@ -71,12 +71,6 @@ def score(player_total, dealer_total):
     return score, score_text
 
 
-
-        
-
-
-
-
 # game loop to help shorten code
 def main():
     pygame.init()

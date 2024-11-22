@@ -72,10 +72,6 @@ def score(player_total, dealer_total):
 
 
 
-        
-
-
-
 
 # game loop to help shorten code
 def main():
