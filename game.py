@@ -1,7 +1,9 @@
 import pygame
 import random
 import os
-import helpers
+import hands
+from titlescreen import title_screen
+
 
 # Initialize variables of game
 width = 1000
@@ -39,50 +41,12 @@ def create_deck():
     random.shuffle(deck)
     return deck
 
-def score(player_total, dealer_total):
 
-    pygame.font.init()
-
-    # Initializes score and bet
-    score = 0
-    bet = 0
-
-    # Load chip images
-    red = pygame.image.load('assets/kenney_boardgame-pack/PNG/Chips/chipRedWhite.png')
-    green = pygame.image.load('assets/kenney_boardgame-pack/PNG/Chips/chipGreenWhite.png')
-    blue = pygame.image.load('assets/kenney_boardgame-pack/PNG/Chips/chipBlueWhite.png')
-    chips = {'red': 10, 'green': 50, 'blue': 100}
-
-    # Simulating a bet selection (update logic as per your game)
-    selected_chip = 'red'  # Example selection
-    bet = chips[selected_chip]
-
-    # Calculate the score based on the result
-    if player_total > dealer_total:
-        score += bet
-    elif player_total < dealer_total:
-        score -= bet
-    # No change to the score if player_total == dealer_total
-
-    # Render score text for display
-    font = pygame.font.Font(None, 36)  # Font size 36
-    score_text = font.render(f'Score: {score}', True, (255, 255, 255))
-
-    return score, score_text
-
-
-# game loop to help shorten code
-def main():
-    pygame.init()
-    pygame.font.init()
-    screen = pygame.display.set_mode((width, height))
-    # caption means game title at the top of the screen
-    pygame.display.set_caption("Blackjack")
-
+def main_game(screen):
     # initializing background
-    background = helpers.build_background(width, height, table_color)
+    background = hands.build_background(width, height, table_color)
 
-    # setting up the game/creating a new deck and removing the cards so there are not duplicates to the game
+    # set up game
     deck = create_deck()
     player_hand = [deck.pop(), deck.pop()]
     dealer_hand = [deck.pop(), deck.pop()]
@@ -90,20 +54,19 @@ def main():
     player_turn = True
     game_over = False
 
-    # main game loop
     running = True
     while running:
         # starting the background from the top of the screen
         screen.blit(background, (0, 0))
 
         # deal hands to player and dealer in their spots
-        helpers.display_hand(screen, dealer_hand, 100, 100, card_images, card_back, hidden=player_turn)
-        helpers.display_hand(screen, player_hand, 100, 400, card_images, card_back)
+        hands.display_hand(screen, dealer_hand, 100, 100, card_images, card_back, hidden=player_turn)
+        hands.display_hand(screen, player_hand, 100, 400, card_images, card_back)
 
         # after the game ends, show the results of the game
         if game_over:
-            player_total = helpers.calculate_hand(player_hand, card_values)
-            dealer_total = helpers.calculate_hand(dealer_hand, card_values)
+            player_total = hands.calculate_hand(player_hand, card_values)
+            dealer_total = hands.calculate_hand(dealer_hand, card_values)
             result = ""
             if player_total > 21:
                 result = "Bust! Dealer wins."
@@ -114,7 +77,7 @@ def main():
             else:
                 result = "It's a tie!"
 
-            helpers.result_screen(result, screen, width, height)
+            hands.result_screen(result, screen, width, height)
             
 
         # event handling and initializing keys for game
@@ -127,18 +90,33 @@ def main():
                     # this is to hit and gain a card for your hand
                     if event.key == pygame.K_h: 
                         player_hand.append(deck.pop())
-                        if helpers.calculate_hand(player_hand, card_values) > 21:
+                        if hands.calculate_hand(player_hand, card_values) > 21:
                             player_turn = False
                             game_over = True
                     # this is to stop drawing cards and keep your hand.
                     elif event.key == pygame.K_s:  # Stand
                         player_turn = False
                         # allows dealer to draw if their total is greater than 17
-                        while helpers.calculate_hand(dealer_hand, card_values) < 17:
+                        while hands.calculate_hand(dealer_hand, card_values) < 17:
                             dealer_hand.append(deck.pop())
                         game_over = True
 
         pygame.display.flip()
+
+
+# game loop to help shorten code
+def main():
+
+    pygame.init()
+    screen = pygame.display.set_mode((width, height))
+    # caption means game title at the top of the screen
+    pygame.display.set_caption("Blackjack")
+
+    # title screen loop
+    show_game = title_screen(screen)
+    if show_game:
+        # start main game
+        main_game(screen)
 
     pygame.quit()
 
