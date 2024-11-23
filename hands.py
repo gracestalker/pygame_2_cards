@@ -47,7 +47,31 @@ def calculate_hand(hand, card_values):
         aces -= 1
     return total
 
-def result_screen(result, screen, width, height):
-    font = pygame.font.Font(None, 48)
-    result_surface = font.render(result, True, (255,255,255))
-    screen.blit(result_surface, (width // 2 - result_surface.get_width() // 2, height // 2 - 20))
+def result_screen(result, screen, width, height, table_color):
+
+    # variables
+
+    play_f = "assets/fonts/play_again.ttf"
+    info_f = "assets/fonts/game_text.ttf"
+    font1 = pygame.font.Font(play_f, 100)
+    font2 = pygame.font.Font(info_f, 36)
+    result_surface = font2.render(result, True, (255,255,255))
+
+    screen.blit(result_surface, (width // 2 - result_surface.get_width() // 2, height // 3 - 20))
+
+    restart_text = font1.render("Play again", True, (255,255,255))
+    restart_info = font2.render("Press [R] to replay  Press [Q] to quit", True, (255,255,255))
+    ### REPLACE WITH A VARIABLE LATE ###
+    total_info = font2.render("Total = 0", True, (255,255,255))
+
+    # draw a rectangle for the restart screen
+    text_width, text_height = restart_text.get_size()
+    rect_x = (width - text_width) // 2
+    rect_y = (height // 2) + 50
+    pygame.draw.rect(screen, (table_color), (rect_x - 10, rect_y - 10, text_width + 20, text_height + 20))
+    screen.blit(restart_text, (rect_x,rect_y-100))
+    screen.blit(restart_info, (width // 5 + 30, rect_y + 50))
+    screen.blit(total_info, (width // 3 + 85, rect_y + 100))
+
+
+

@@ -32,7 +32,6 @@ for suit in suits:
 card_values = {'2': 2, '3': 3, '4': 4, '5': 5, '6': 6, '7': 7, '8': 8, '9': 9, '10': 10, 'A': 11, 'J': 10, 'Q': 10, 'K': 10}
 
 
-
 ### functions for game ###
 
 # creates and shuffles the deck for the game using list comprehension. ex: ('2', 'Clubs'), ('2', 'Hearts')...
@@ -56,15 +55,23 @@ def main_game(screen):
 
     running = True
     while running:
-        # starting the background from the top of the screen
-        screen.blit(background, (0, 0))
 
-        # deal hands to player and dealer in their spots
-        hands.display_hand(screen, dealer_hand, 100, 100, card_images, card_back, hidden=player_turn)
-        hands.display_hand(screen, player_hand, 100, 400, card_images, card_back)
+        if not game_over:
+            # starting the background from the top of the screen
+            screen.blit(background, (0, 0))
+
+            # deal hands to player and dealer in their spots
+            hands.display_hand(screen, dealer_hand, 100, 100, card_images, card_back, hidden=player_turn)
+            hands.display_hand(screen, player_hand, 100, 400, card_images, card_back)
 
         # after the game ends, show the results of the game
-        if game_over:
+        else:
+            # create new screen for the overlay of text
+            end_screen = pygame.Surface((width, height))
+            end_screen.fill((table_color))
+            screen.blit(end_screen, (0,0))
+
+            # display results
             player_total = hands.calculate_hand(player_hand, card_values)
             dealer_total = hands.calculate_hand(dealer_hand, card_values)
             result = ""
@@ -77,13 +84,16 @@ def main_game(screen):
             else:
                 result = "It's a tie!"
 
-            hands.result_screen(result, screen, width, height)
+            hands.result_screen(result, screen, width, height, table_color)
             
+            # show the instructions to restart or quit the game!
 
+            
         # event handling and initializing keys for game
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                running = False
+                pygame.quit()
+                exit()
 
             if player_turn and not game_over:
                 if event.type == pygame.KEYDOWN:
@@ -101,6 +111,13 @@ def main_game(screen):
                             dealer_hand.append(deck.pop())
                         game_over = True
 
+            if game_over and event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_r:
+                    running = False
+                elif event.key == pygame.K_q:
+                    pygame.quit()
+                    exit()
+
         pygame.display.flip()
 
 
@@ -116,7 +133,8 @@ def main():
     show_game = title_screen(screen)
     if show_game:
         # start main game
-        main_game(screen)
+        while True:
+            main_game(screen)
 
     pygame.quit()
 
