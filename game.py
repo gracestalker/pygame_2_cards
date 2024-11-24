@@ -3,6 +3,7 @@ import random
 import os
 import hands
 from titlescreen import title_screen
+import betting
 
 
 # Initialize variables of game
@@ -11,6 +12,7 @@ height = 600
 table_color = (53, 101, 77)
 card_back = pygame.image.load('assets/kenney_boardgame-pack/PNG/Cards/cardBack_red5.png')
 title_color = (0, 0, 255)
+player_balance = 1500
 
 
 # create a dictionary for the images to be loaded into the game
@@ -41,7 +43,13 @@ def create_deck():
     return deck
 
 
-def main_game(screen):
+def main_game(screen, player_balance):
+
+    # betting
+    chip_values = [10, 50, 100, 500]
+    bet = betting.betting(screen, player_balance, chip_values, width, height, table_color)
+    total_bet = bet
+
     # initializing background
     background = hands.build_background(width, height, table_color)
 
@@ -53,12 +61,14 @@ def main_game(screen):
     player_turn = True
     game_over = False
 
+
     running = True
     while running:
 
         if not game_over:
             # starting the background from the top of the screen
             screen.blit(background, (0, 0))
+
 
             # deal hands to player and dealer in their spots
             hands.display_hand(screen, dealer_hand, 100, 100, card_images, card_back, hidden=player_turn)
@@ -75,19 +85,22 @@ def main_game(screen):
             player_total = hands.calculate_hand(player_hand, card_values)
             dealer_total = hands.calculate_hand(dealer_hand, card_values)
             result = ""
+            
             if player_total > 21:
                 result = "Bust! Dealer wins."
+                player_balance -= total_bet
             elif dealer_total > 21 or player_total > dealer_total:
                 result = "Congratulations! You win!"
+                player_balance += total_bet
             elif player_total < dealer_total:
                 result = "You lost! Dealer wins."
+                player_balance -= total_bet
             else:
                 result = "It's a tie!"
 
-            hands.result_screen(result, screen, width, height, table_color)
+            # results screen
+            hands.result_screen(result, screen, width, height, table_color, player_balance)
             
-            # show the instructions to restart or quit the game!
-
             
         # event handling and initializing keys for game
         for event in pygame.event.get():
@@ -117,12 +130,16 @@ def main_game(screen):
                 elif event.key == pygame.K_q:
                     pygame.quit()
                     exit()
+        
+        return player_balance
 
         pygame.display.flip()
 
 
 # game loop to help shorten code
 def main():
+
+    player_balance = 1500
 
     pygame.init()
     screen = pygame.display.set_mode((width, height))
@@ -132,10 +149,11 @@ def main():
     # title screen loop
     show_game = title_screen(screen)
     if show_game:
+        while player_balance > 0:
+            player_balance = main_game(screen, player_balance)
         # start main game
-        while True:
-            main_game(screen)
-
+    
+    print('Game Over!')
     pygame.quit()
 
 # Run the game
