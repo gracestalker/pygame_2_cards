@@ -1,8 +1,9 @@
 import pygame
 
 
-def betting(screen, total, chip_values, width, height, table_color):
+def betting(screen, state, chip_values, width, height, table_color):
 
+    pygame.font.init()
     font = pygame.font.Font(None, 36)
     chip_rects = []
 
@@ -21,7 +22,7 @@ def betting(screen, total, chip_values, width, height, table_color):
         screen.fill((table_color))
 
         # display betting process
-        prompt = font.render(f"Your total: ${total}", True, (255,255,255))
+        prompt = font.render(f"Your total: ${state}", True, (255,255,255))
         screen.blit(prompt, (width // 2 - prompt.get_width() // 2, height // 3))
 
         # draw chips
@@ -35,13 +36,14 @@ def betting(screen, total, chip_values, width, height, table_color):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
+                pygame.font.quit
                 exit()
 
             if event.type == pygame.MOUSEBUTTONDOWN:
                 mouse_pos = pygame.mouse.get_pos()
                 for rect, value in chip_rects:
                     if rect.collidepoint(mouse_pos):
-                        if value > total:
+                        if value > state:
                             print("You cannot bet more than your total.")
                         else:
                             return value

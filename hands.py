@@ -47,7 +47,7 @@ def calculate_hand(hand, card_values):
         aces -= 1
     return total
 
-def result_screen(result, screen, width, height, table_color, player_balance):
+def result_screen(result, screen, width, height, table_color, state):
 
     # variables
 
@@ -62,7 +62,7 @@ def result_screen(result, screen, width, height, table_color, player_balance):
     restart_text = font1.render("Play again", True, (255,255,255))
     restart_info = font2.render("Press [R] to replay  Press [Q] to quit", True, (255,255,255))
     ### REPLACE WITH A VARIABLE LATER ###
-    total_info = font2.render(f"Total = {player_balance}", True, (255,255,255))
+    total_info = font2.render(f"Total = {state['total']}", True, (255,255,255))
 
     # draw a rectangle for the restart screen
     text_width, text_height = restart_text.get_size()
