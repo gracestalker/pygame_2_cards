@@ -4,6 +4,7 @@
 
 ## Here are some photos of my game!
 ![title screen](assets/screenshots/titlescreen.jpg)
+![betting screen](assets/screenshots/bettingscreen.jpg)
 ![actual game](assets/screenshots/gameplay.jpg)
 ![end screen](assets/screenshots/endscreen.jpg)
 

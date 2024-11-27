@@ -45,14 +45,9 @@ def create_deck():
 
 def main_game(screen, state):
 
-    # betting
-    chip_values = [50, 100, 500]
+    # initializing betting values
+    chip_values = [10, 50, 100, 500]
     bet = betting.betting(screen, state["total"], chip_values, width, height, table_color)
-
-    if bet == 0:
-        print("No bet placed, exiting game.")
-        return total
-
     total_bet = bet
 
     # initializing background
@@ -63,6 +58,8 @@ def main_game(screen, state):
     player_hand = [deck.pop(), deck.pop()]
     dealer_hand = [deck.pop(), deck.pop()]
     # if it is still the players turn, it will not be the dealer's turn to draw cards yet
+    
+    # use different variables to tell which stages you are in in the game
     player_turn = True
     game_over = False
     result_processed = False
@@ -77,7 +74,7 @@ def main_game(screen, state):
 
 
             # deal hands to player and dealer in their spots
-            hands.display_hand(screen, dealer_hand, 100, 100, card_images, card_back, hidden=player_turn)
+            hands.display_hand(screen, dealer_hand, 100, 100, card_images, card_back, hidden=player_turn and not game_over)
             hands.display_hand(screen, player_hand, 100, 400, card_images, card_back)
 
         # after the game ends, show the results of the game
@@ -97,12 +94,18 @@ def main_game(screen, state):
                 if player_total > 21:
                     result = "Bust! Dealer wins."
                     state['total'] -= total_bet
+                elif dealer_total > 21:
+                    result = 'Dealer busts! You win!'
+                    state['total'] += total_bet
                 elif dealer_total > 21 or player_total > dealer_total:
                     result = "Congratulations! You win!"
                     state['total'] += total_bet
                 elif player_total < dealer_total:
                     result = "You lost! Dealer wins."
                     state['total'] -= total_bet
+                elif player_total == 21 and player_turn and not game_over:
+                    result = 'BLACKJACK!'
+                    state['total'] += int(total_bet * 1.5)
                 else:
                     result = "It's a tie!"
             
@@ -130,8 +133,8 @@ def main_game(screen, state):
                     elif event.key == pygame.K_s:  # Stand
                         player_turn = False
                         # allows dealer to draw if their total is greater than 17
-                        while hands.calculate_hand(dealer_hand, card_values) < 17:
-                            dealer_hand.append(deck.pop())
+                        hands.dealer_turn(screen, dealer_hand, deck, card_images, card_back, table_color, card_values)
+
                         game_over = True
 
             if game_over and event.type == pygame.KEYDOWN:
@@ -140,14 +143,14 @@ def main_game(screen, state):
                 elif event.key == pygame.K_q:
                     pygame.quit()
                     exit()
-        
+
 
         pygame.display.flip()
 
 
 
 # game loop to help shorten code
-def main():
+def main(result=''):
 
     state = {'total': 1500}
 
@@ -159,7 +162,7 @@ def main():
     pygame.display.set_caption("Blackjack")
 
     # title screen loop
-    show_game = title_screen(screen)
+    show_game = title_screen(screen, result, state, width, height)
     if show_game:
         while True:
             main_game(screen, state)

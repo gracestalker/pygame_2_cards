@@ -4,7 +4,7 @@ import buttons
 
 
 # function for my title screen to start the game
-def title_screen(screen):
+def title_screen(screen, result, state, width, height):
 
     # initialize images used on title screen
     start_image = pygame.image.load('assets/kenney_boardgame-pack/PNG/background/start_btn.png')
@@ -39,8 +39,18 @@ def title_screen(screen):
             pygame.quit()
             return False
         
-        #draw game logo
+        # draw game logo
         blackjack_logo.draw(screen)
+
+        # instructional text
+        info_f = "assets/fonts/game_text.ttf"
+        font2 = pygame.font.Font(info_f, 36)
+
+        h_inst = font2.render("Press [H] to Hit", True, (255,255,255))
+        s_inst = font2.render("Press [S] to Stand", True, (255,255,255))
+
+        screen.blit(h_inst, (250,550))
+        screen.blit(s_inst, (500,550))
 
         # event handler
         for event in pygame.event.get():

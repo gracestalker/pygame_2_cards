@@ -3,17 +3,25 @@ import pygame
 
 def betting(screen, state, chip_values, width, height, table_color):
 
+    # initializing variables
     pygame.font.init()
     font = pygame.font.Font(None, 36)
     chip_rects = []
 
     # create chip buttons
     # center them
+    red_chip = pygame.image.load('assets/kenney_boardgame-pack/PNG/Chips/chipRedWhite.png')
+    blue_chip = pygame.image.load('assets/kenney_boardgame-pack/PNG/Chips/chipBlueWhite.png')
+    green_chip = pygame.image.load('assets/kenney_boardgame-pack/PNG/Chips/chipGreenWhite.png')
+    black_chip = pygame.image.load('assets/kenney_boardgame-pack/PNG/Chips/chipBlackWhite.png')
+
     chip_y = height // 2
     chip_x = width // 2 - (len(chip_values) * 50) // 2
+
     
+    # create placement for chips
     for i, value in enumerate(chip_values):
-        rect = pygame.Rect(chip_x + i * 100, chip_y, 80, 80)
+        rect = pygame.Rect(chip_x + i * 100 - 75, chip_y - 5, 80, 80)
         chip_rects.append((rect, value))
 
     betting = True
@@ -21,15 +29,20 @@ def betting(screen, state, chip_values, width, height, table_color):
         # background for betting screen
         screen.fill((table_color))
 
+        # blit chips onto screen
+        screen.blit(red_chip, (chip_x - 75, chip_y))
+        screen.blit(green_chip, (chip_x + 25, chip_y))
+        screen.blit(blue_chip, (chip_x + 125, chip_y))
+        screen.blit(black_chip, (chip_x + 220, chip_y))
+
         # display betting process
         prompt = font.render(f"Your total: ${state}", True, (255,255,255))
         screen.blit(prompt, (width // 2 - prompt.get_width() // 2, height // 3))
 
         # draw chips
         for rect, value in chip_rects:
-            pygame.draw.ellipse(screen, (255,255,0), rect)
-            text = font.render(f"${value}", True, (0,0,0))
-            screen.blit(text, (rect.centerx - text.get_width() // 2, rect.centery - text.get_height() // 2))
+            text = font.render(f"{value}", True, (255,255,255))
+            screen.blit(text, (rect.centerx - text.get_width() + 10 // 2, rect.centery - text.get_height() // 2 - 3))
 
         pygame.display.flip()
 

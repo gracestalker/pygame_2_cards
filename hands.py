@@ -60,8 +60,7 @@ def result_screen(result, screen, width, height, table_color, state):
     screen.blit(result_surface, (width // 2 - result_surface.get_width() // 2, height // 3 - 20))
 
     restart_text = font1.render("Play again", True, (255,255,255))
-    restart_info = font2.render("Press [R] to replay  Press [Q] to quit", True, (255,255,255))
-    ### REPLACE WITH A VARIABLE LATER ###
+    restart_info = font2.render("Press [R] to redeal  Press [Q] to quit", True, (255,255,255))
     total_info = font2.render(f"Total = {state['total']}", True, (255,255,255))
 
     # draw a rectangle for the restart screen
@@ -74,4 +73,27 @@ def result_screen(result, screen, width, height, table_color, state):
     screen.blit(total_info, (width // 3 + 85, rect_y + 100))
 
 
+# plays out dealer's turn so you can see what their turn looks like
+def dealer_turn(screen, dealer_hand, deck, card_images, card_back, table_color, card_values):
+    
+    while True:
+        # calculate dealer total
+        dealer_total = calculate_hand(dealer_hand, card_values)
+
+        # check for soft 17
+        soft_17 = dealer_total == 17 and any(card[0] == 'A' for card in card_values)
+
+        # causes dealer to hit on less than 17 or a 17 with an Ace
+        if dealer_total < 17 or soft_17:
+            dealer_hand.append(deck.pop())
+
+            screen.fill(table_color)
+            display_hand(screen, dealer_hand, 100, 100, card_images, card_back, hidden = False)
+            pygame.time.wait(1000)
+            pygame.display.flip()
+            
+            pygame.time.wait(1000)
+
+        else:
+            break
 
