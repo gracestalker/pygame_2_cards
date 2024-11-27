@@ -7,6 +7,8 @@ def betting(screen, state, chip_values, width, height, table_color):
     pygame.font.init()
     font = pygame.font.Font(None, 36)
     chip_rects = []
+    info_f = "assets/fonts/game_text.ttf"
+    font2 = pygame.font.Font(info_f, 36)
 
     # create chip buttons
     # center them
@@ -36,13 +38,17 @@ def betting(screen, state, chip_values, width, height, table_color):
         screen.blit(black_chip, (chip_x + 220, chip_y))
 
         # display betting process
-        prompt = font.render(f"Your total: ${state}", True, (255,255,255))
+        prompt = font2.render(f"Your total: ${state}", True, (255,255,255))
         screen.blit(prompt, (width // 2 - prompt.get_width() // 2, height // 3))
 
         # draw chips
         for rect, value in chip_rects:
-            text = font.render(f"{value}", True, (255,255,255))
+            text = font2.render(f"{value}", True, (255,255,255))
             screen.blit(text, (rect.centerx - text.get_width() + 10 // 2, rect.centery - text.get_height() // 2 - 3))
+
+        # instructional text
+        bet_inst = font2.render("Click Your Bet!", True, (255,255,255))
+        screen.blit(bet_inst, (390,425))
 
         pygame.display.flip()
 

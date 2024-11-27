@@ -1,4 +1,13 @@
 import pygame
+import random
+
+
+# creates and shuffles the deck for the game using list comprehension. ex: ('2', 'Clubs'), ('2', 'Hearts')...
+def create_deck(values, suits):
+    deck = [(value, suit.title()) for value in values for suit in suits]
+    random.shuffle(deck)
+    return deck
+
 
 # building the table for the game, table and card area
 def build_background(width, height, table_color):

@@ -34,15 +34,6 @@ for suit in suits:
 card_values = {'2': 2, '3': 3, '4': 4, '5': 5, '6': 6, '7': 7, '8': 8, '9': 9, '10': 10, 'A': 11, 'J': 10, 'Q': 10, 'K': 10}
 
 
-### functions for game ###
-
-# creates and shuffles the deck for the game using list comprehension. ex: ('2', 'Clubs'), ('2', 'Hearts')...
-def create_deck():
-    deck = [(value, suit.title()) for value in values for suit in suits]
-    random.shuffle(deck)
-    return deck
-
-
 def main_game(screen, state):
 
     # initializing betting values
@@ -54,7 +45,7 @@ def main_game(screen, state):
     background = hands.build_background(width, height, table_color)
 
     # set up game
-    deck = create_deck()
+    deck = hands.create_deck(values, suits)
     player_hand = [deck.pop(), deck.pop()]
     dealer_hand = [deck.pop(), deck.pop()]
     # if it is still the players turn, it will not be the dealer's turn to draw cards yet
