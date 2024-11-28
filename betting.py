@@ -66,6 +66,3 @@ def betting(screen, state, chip_values, width, height, table_color):
                             print("You cannot bet more than your total.")
                         else:
                             return value
-
-
-

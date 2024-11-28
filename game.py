@@ -1,10 +1,9 @@
 import pygame
-import random
-import os
-import hands
-from titlescreen import title_screen
-import betting
-import sounds
+import os # allows for a loop to be made to make all of the loaded images for the cards
+import hands # functions for the game
+from titlescreen import title_screen # function for title screen
+import betting # functions for betting code
+import sounds # functions for casino music and sound effects
 
 
 # Initialize variables of game
@@ -55,6 +54,26 @@ def main_game(screen, state):
     game_over = False
     result_processed = False
 
+    # blackjack rules implemented
+    if player_total == 21 or dealer_total == 21:
+        player_turn = False
+        game_over = True
+
+        if player_total == 21 and dealer_total == 21:
+            result = "It's a tie! Both have Blackjack!"
+        elif player_total == 21:
+            result = "Blackjack! You win!"
+            state['total'] += total_bet * 2
+        else:
+            result = "Dealer has Blackjack! You lose."
+            state['total'] -= total_bet
+
+        
+        # results screen
+        hands.result_screen(result, screen, width, height, table_color, state)
+        result_processed = True
+
+
 
     running = True
     while running:
@@ -62,8 +81,6 @@ def main_game(screen, state):
         if not game_over:
             # starting the background from the top of the screen
             screen.blit(background, (0, 0))
-
-
             # deal hands to player and dealer in their spots
             hands.display_hand(screen, dealer_hand, 100, 100, card_images, card_back, hidden=player_turn and not game_over)
             hands.display_hand(screen, player_hand, 100, 400, card_images, card_back)
@@ -105,7 +122,9 @@ def main_game(screen, state):
                 hands.result_screen(result, screen, width, height, table_color, state)
                 result_processed = True
             
-            
+        
+        hit_btn_rect, stand_btn_rect = hands.display_hand(screen, player_hand, 100, 400, card_images, card_back, draw_buttons = True)
+
         # event handling and initializing keys for game
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -113,20 +132,20 @@ def main_game(screen, state):
                 exit()
 
             if player_turn and not game_over:
-                if event.type == pygame.KEYDOWN:
-                    # this is to hit and gain a card for your hand
-                    if event.key == pygame.K_h: 
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    if hit_btn_rect and hit_btn_rect.collidepoint(event.pos):
+                        # this is to hit and gain a card for your hand
                         player_hand.append(deck.pop())
                         if hands.calculate_hand(player_hand, card_values) > 21:
                             player_turn = False
                             game_over = True
                     # this is to stop drawing cards and keep your hand.
-                    elif event.key == pygame.K_s:  # Stand
+                    elif stand_btn_rect and stand_btn_rect.collidepoint(event):
                         player_turn = False
                         # allows dealer to draw if their total is greater than 17
                         hands.dealer_turn(screen, dealer_hand, deck, card_images, card_back, table_color, card_values)
-
                         game_over = True
+
 
             if game_over and event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_r:
