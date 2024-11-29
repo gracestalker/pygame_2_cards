@@ -1,28 +1,6 @@
 import pygame
 import random
 
-class Button:
-    def __init__(self, x, y, image, text, font, font_color):
-        self.image = image
-        self.rect = self.image.get_rect(topleft = (x,y))
-        self.text = text
-        self.font = font
-        self.font_color = font_color
-
-    def draw(self, screen):
-        # draw the buttons
-        screen.blit(self.image, self.rect)
-
-        # draw buttont text
-        text_surf = self.font.render(self.text, True, self.font_color)
-        text_rect = text_surf.get_rect(center = self.rect.center)
-        screen.blit(text_surf, text_rect)
-
-    def is_clicked(self, event):
-        if event.type == pygame.MOUSEBUTTONDOWN:
-            if self.rect.collidepoint(event.pos):
-                return True
-        return False
 
 # creates and shuffles the deck for the game using list comprehension. ex: ('2', 'Clubs'), ('2', 'Hearts')...
 def create_deck(values, suits):
@@ -40,56 +18,20 @@ def build_background(width, height, table_color):
 
 
 # displaying the cards on the screen for the player and dealer
-def display_hand(screen, hand, x, y, card_images, card_back, hidden=False, draw_buttons = False):
+def display_hand(screen, hand, x, y, card_images, card_back, hidden=False):
 
     space = 80
-    
+
     for i, card in enumerate(hand):
         # creates the boundaries for the cards, centered
         card_x = 250 + x + i * space
+
         if hidden and i == 0:
             screen.blit(card_back, (card_x, y))  # Draw the back of a card image to hide the dealer's second card
         else:
             if card in card_images:
                 # displays your cards for you
                 screen.blit(card_images[card], (card_x, y))
-    
-    if draw_buttons:
-        # draw and scale images
-        btn_width = 150
-        btn_height = 50
-        h_btn = pygame.image.load('assets/kenney_boardgame-pack/PNG/background/hs_btn.png')
-        s_btn = pygame.image.load('assets/kenney_boardgame-pack/PNG/background/hs_btn.png')
-        h_btn = pygame.transform.scale(h_btn, (btn_width, btn_height))
-        s_btn = pygame.transform.scale(s_btn, (btn_width, btn_height))
-
-        # font
-        info_f = "assets/fonts/game_text.ttf"
-        font2 = pygame.font.Font(info_f, 36)
-
-        # button positions
-        hit_btn_x = x - 200
-        hit_btn_y = y + 40
-        stand_btn_x = x - 200
-        stand_btn_y = y + 110
-
-        # draw hit button
-        screen.blit(h_btn, (hit_btn_x, hit_btn_y))
-        hit_text = font2.render("HIT", True, (255,255,255))
-        hit_text_rect = hit_text.get_rect(center = (hit_btn_x + btn_width // 2, hit_btn_y + btn_height // 2))
-        screen.blit(hit_text, hit_text_rect)
-
-        # draw stand button
-        screen.blit(s_btn, (stand_btn_x, stand_btn_y))
-        stand_text = font2.render("STAND", True, (255,255,255))
-        stand_text_rect = stand_text.get_rect(center = (stand_btn_x + btn_width // 2, stand_btn_y + btn_height // 2))
-        screen.blit(stand_text, stand_text_rect)
-
-        return (pygame.Rect(hit_btn_x, hit_btn_y, btn_width, btn_height),
-                pygame.Rect(stand_btn_x, stand_btn_y, btn_width, btn_height))
-    
-    else:
-        return None, None
 
 
 def calculate_hand(hand, card_values):
