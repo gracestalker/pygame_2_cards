@@ -5,7 +5,6 @@ def betting(screen, state, chip_values, width, height, table_color):
 
     # initializing variables
     pygame.font.init()
-    font = pygame.font.Font(None, 36)
     chip_rects = []
     info_f = "assets/fonts/game_text.ttf"
     font2 = pygame.font.Font(info_f, 36)

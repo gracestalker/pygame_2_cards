@@ -15,6 +15,9 @@ def game_set_up():
 
 # money noise after round ends and when you place your bet
 def deal_sound():
-    pygame.mixer.load("assets/cardPlace1.ogg")
-    pygame.mixer.music.play(-1)
+    
+    pygame.mixer.init()
+
+    deal_sound = pygame.mixer.Sound("assets/sounds/cardPlace1.ogg")
+    deal_sound.play(-1)
 

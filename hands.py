@@ -1,5 +1,6 @@
 import pygame
 import random
+import sounds
 
 
 # creates and shuffles the deck for the game using list comprehension. ex: ('2', 'Clubs'), ('2', 'Hearts')...
@@ -43,9 +44,10 @@ def calculate_hand(hand, card_values):
 
     # creates the loop to calculate the total
     for card in hand:
+        value = card[0]
         # card[0] pulls the value from our cards dictionary to see if you have an Ace and to calculate your total score.
-        total += card_values[card[0]]
-        if card[0] == 'A':
+        total += card_values[value]
+        if value == 'A':
             aces += 1
     # this is the loop where the special rule is put into play
     # if the total is greater than 21 and you have more than 0 Aces, it will deduct ten points from your score and take away the ace value from your hand
@@ -82,7 +84,7 @@ def result_screen(result, screen, width, height, table_color, state):
 
 # plays out dealer's turn so you can see what their turn looks like
 def dealer_turn(screen, dealer_hand, deck, card_images, card_back, table_color, card_values):
-    
+
     while True:
         # calculate dealer total
         dealer_total = calculate_hand(dealer_hand, card_values)
@@ -92,6 +94,7 @@ def dealer_turn(screen, dealer_hand, deck, card_images, card_back, table_color, 
 
         # causes dealer to hit on less than 17 or a 17 with an Ace
         if dealer_total < 17 or soft_17:
+            sounds.deal_sound()
             dealer_hand.append(deck.pop())
 
             screen.fill(table_color)
@@ -104,3 +107,13 @@ def dealer_turn(screen, dealer_hand, deck, card_images, card_back, table_color, 
         else:
             break
 
+def split(player_hand, deck):
+    # function splits the player's hand into two if the cards are the same value
+
+    if len(player_hand) == 2 and player_hand[0][0] == player_hand[1][0]:
+        hand1 = [player_hand[0], deck.pop()]
+        hand2 = [player_hand[1], deck.pop()]
+        return hand1, hand2
+    
+    else:
+        return None, None
