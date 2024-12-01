@@ -88,11 +88,12 @@ def main_game(screen, state):
             if split_mode:
 
                 num_hands = len(split_hands)
-                hand_width = 230
+                hand_width = 300
+                base_offset = -200
                 spacing = (width - (num_hands * hand_width)) // (num_hands + 1)
 
                 for idx, split_hand in enumerate(split_hands):
-                    x_offset = spacing + idx * (hand_width + spacing)
+                    x_offset = base_offset + spacing + idx * (hand_width + spacing)
                     y_offset = 400
                     color = (0,255,0) if idx == current_hand_index else (255, 255, 255)
 
