@@ -58,6 +58,7 @@ def calculate_hand(hand, card_values):
 
 def result_screen(result, screen, width, height, table_color, state):
 
+
     # variables
 
     play_f = "assets/fonts/play_again.ttf"
@@ -80,6 +81,8 @@ def result_screen(result, screen, width, height, table_color, state):
     screen.blit(restart_text, (rect_x,rect_y-100))
     screen.blit(restart_info, (width // 5 + 30, rect_y + 50))
     screen.blit(total_info, (width // 3 + 85, rect_y + 100))
+
+    pygame.display.update()
 
 
 # plays out dealer's turn so you can see what their turn looks like

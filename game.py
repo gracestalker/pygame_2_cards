@@ -52,13 +52,19 @@ def main_game(screen, state):
     current_hand_index = 0
     
     # check if the player has Blackjack
+    
     if hands.calculate_hand(player_hand, card_values) == 21:
+        end_screen = pygame.Surface((width, height))
+        end_screen.fill(table_color)
+        screen.blit(end_screen, (0,0))
+        
         result = "Blackjack! You win!"
         state['total'] += int(total_bet * 1.5)  # Payout is usually 1.5 times the bet
         game_over = True
         player_turn = False
         hands.display_hand(screen, player_hand, 100, 400, card_images, card_back)
         hands.result_screen(result, screen, width, height, table_color, state)
+        pygame.time.delay(2000)
         return
 
     
@@ -73,9 +79,6 @@ def main_game(screen, state):
     running = True
     while running:
 
-        if state['total'] <= 0:
-            bankrupt = True
-            game_over = True
 
         if not game_over and not bankrupt:
             # starting the background from the top of the screen
@@ -100,7 +103,6 @@ def main_game(screen, state):
                     # draw a rectangle around the active hand
                     rect = pygame.Rect(x_offset - 15, y_offset - 20, hand_width, 140)
                     pygame.draw.rect(screen, color, rect, border_radius = 15, width = 3)
-
                     hands.display_hand(screen, split_hand, x_offset, y_offset, card_images, card_back)
 
 
@@ -141,39 +143,30 @@ def main_game(screen, state):
         # after the game ends, show the results of the game
         else:
             if not result_processed:
-
-                # create new screen for the overlay of text
-                end_screen = pygame.Surface((width, height))
-                end_screen.fill((table_color))
-                screen.blit(end_screen, (0,0))
-
                 results = []
 
                 if split_mode:
                     for idx, split_hand in enumerate(split_hands):
                         player_total = hands.calculate_hand(split_hand, card_values)
                         dealer_total = hands. calculate_hand(split_hand, card_values)
-                        hand_result = ""
 
                         if player_total > 21:
-                            hand_result = f"Hand {idx+1}: Bust! Dealer wins."
+                            results.append(f"Hand {idx+1}: Bust! Dealer wins.")
                             state['total'] -= total_bet
                         elif dealer_total > 21:
-                            hand_result = f"Hand {idx+1}: Dealer Bust! You win."
+                            results.append(f"Hand {idx+1}: Dealer Bust! You win.")
                             state['total'] += total_bet
                         elif player_total > dealer_total:
-                            hand_result = f"Hand {idx+1}: You win!"
+                            results.append(f"Hand {idx+1}: You win!")
                             state['total'] += total_bet
                         elif player_total < dealer_total:
-                            hand_result = f"Hand {idx+1}: Dealer wins."
+                            results.append(f"Hand {idx+1}: Dealer wins.")
                             state['total'] -= total_bet
-                        elif player_total == 21 and player_turn and not game_over:
-                            result = 'BLACKJACK!'
-                            state['total'] += int(total_bet * 1.5)
+                        elif player_total == dealer_total:
+                            results.append("Hand {idx+1}: It's a Tie!")
                         else:
-                            hand_result = f"Hand {idx+1}: It's a Tie!"
-
-                        results.append(hand_result)
+                            results.append(f"Hand {idx+1}: Dealer wins.")
+                            state['total'] -= total_bet
                     
                 else:
                     # display results
@@ -181,29 +174,30 @@ def main_game(screen, state):
                     dealer_total = hands.calculate_hand(dealer_hand, card_values)
                     
                     if player_total > 21:
-                        result = "Bust! Dealer wins."
+                        results.append("Bust! Dealer wins.")
                         state['total'] -= total_bet
                     elif dealer_total > 21:
-                        result = 'Dealer busts! You win!'
+                        results.append('Dealer busts! You win!')
                         state['total'] += total_bet
                     elif player_total > dealer_total:
-                        result = "Congratulations! You win!"
+                        results.append("Congratulations! You win!")
                         state['total'] += total_bet
-                    elif player_total < dealer_total:
-                        result = "You lost! Dealer wins."
-                        state['total'] -= total_bet
+                    elif player_total == dealer_total:
+                        results.append("It's a tie!")
                     else:
-                        result = "It's a tie!"
-                    results.append(result)
-                
-                    y_offset = 100
-                    info_f = "assets/fonts/game_text.ttf"
-                    font2 = pygame.font.Font(info_f, 80)
+                        results.append("You lost! Dealer wins.")
+                        state['total'] -= total_bet
 
-                    for result in results:
-                        text_surface = font2.render(result, True, (255,255,255))
-                        screen.blit(text_surface, (width // 2 - text_surface.get_width() // 2, y_offset))
-                        y_offset += 50
+
+                if game_over and not result_processed:
+                    end_screen = pygame.Surface((width, height))
+                    end_screen.fill(table_color)
+
+                    screen.blit(end_screen, (0,0))
+                    
+                    for idx, result in enumerate(results):
+                        hands.result_screen(result, screen, width, height, table_color, state)
+                        pygame.display.flip()
 
                     # results screen
                     result_processed = True
@@ -226,7 +220,6 @@ def main_game(screen, state):
                                 current_hand_index += 1
                                 if current_hand_index >= len(split_hands):
                                     player_turn = False
-                                    hands.dealer_turn(screen, dealer_hand, deck, card_images, card_back, table_color, card_values)
                         else:
                             player_hand.append(deck.pop())
                             if hands.calculate_hand(player_hand, card_values) > 21:
@@ -236,15 +229,14 @@ def main_game(screen, state):
                     # this is to stop drawing cards and keep your hand.
                     elif event.key == pygame.K_s:
                         if split_mode:
-                            current_hand_index += 1
-                            if current_hand_index >= len(split_hands):
+                            # Check if the current hand is done
+                            if hands.calculate_hand(split_hands[current_hand_index], card_values) > 21:
+                                current_hand_index += 1  # Move to the next hand
+                            if current_hand_index >= len(split_hands):  # All hands have been played
                                 player_turn = False
-                                hands.dealer_turn(screen, dealer_hand, deck, card_images, card_back, table_color, card_values)
+
                         else:
                             player_turn = False
-                            # allows dealer to draw if their total is greater than 17
-                            hands.dealer_turn(screen, dealer_hand, deck, card_images, card_back, table_color, card_values)
-                            game_over = True
                     
                     # this is to split the deck
                     elif event.key == pygame.K_f:
@@ -254,19 +246,16 @@ def main_game(screen, state):
                                 split_hands = [hand1, hand2]
                                 split_mode = True
 
-                                # handle blackjack immediately after split
-                                for idx, split_hand in enumerate(split_hands):
-                                    if hands.calculate_hand(split_hand, card_values) == 21:
-                                        result = f"Hand {idx + 1} has Blackjack!"
-                                        state['total'] += total_bet
-
             if game_over and event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_r:
                     running = False
                 elif event.key == pygame.K_q:
                     pygame.quit()
                     exit()
-
+        
+        if not player_turn and not game_over:
+            hands.dealer_turn(screen, dealer_hand, deck, card_images, card_back, table_color, card_values)
+            game_over = True
 
         pygame.display.flip()
 
