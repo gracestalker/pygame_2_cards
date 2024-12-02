@@ -224,6 +224,13 @@ def main_game(screen, state):
                             if hands.calculate_hand(player_hand, card_values) > 21:
                                 player_turn = False
                                 game_over = True
+                                screen.fill(table_color)
+
+                                # shows the card you busted on
+                                hands.display_hand(screen, player_hand, 100, 400, card_images, card_back)
+                                hands.display_hand(screen, dealer_hand, 100, 100, card_images, card_back, hidden=True)  # Show dealer's face-down card
+                                pygame.display.flip()
+                                pygame.time.delay(1000)
 
                     # this is to stop drawing cards and keep your hand.
                     elif event.key == pygame.K_s:
@@ -255,6 +262,12 @@ def main_game(screen, state):
 
                                 player_turn = False
                                 game_over = hands.calculate_hand(player_hand, card_values) > 21
+
+                                # shows the card you busted on
+                                hands.display_hand(screen, player_hand, 100, 400, card_images, card_back)
+                                hands.display_hand(screen, dealer_hand, 100, 100, card_images, card_back, hidden=True)  # Show dealer's face-down card
+                                pygame.display.flip()
+                                pygame.time.delay(1000)
                             
                             else:
                                 print("Not enough chips to double down.")
@@ -267,7 +280,7 @@ def main_game(screen, state):
                     exit()
         
         if not player_turn and not game_over:
-            hands.dealer_turn(screen, dealer_hand, player_hand, deck, card_images, card_back, table_color, card_values)
+            hands.dealer_turn(screen, dealer_hand, player_hand, deck, card_images, card_back, table_color, card_values, split_hands, width)
             
             game_over = True
 

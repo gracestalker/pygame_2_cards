@@ -98,30 +98,62 @@ def result_screen(results, result, screen, width, height, table_color, state):
 
 
 # plays out dealer's turn so you can see what their turn looks like
-def dealer_turn(screen, dealer_hand, player_hand, deck, card_images, card_back, table_color, card_values):
+def dealer_turn(screen, dealer_hand, player_hand, deck, card_images, card_back, table_color, card_values, split_hands, width, ):
 
+
+    display_hand(screen, dealer_hand, 100, 100, card_images, card_back, hidden=False)
+
+    # If the player has split hands, display those as well
+    if split_hands:
+        # Variables for split hands display
+        num_hands = len(split_hands)
+        hand_width = 350
+        base_offset = -200
+        spacing = (width - (num_hands * hand_width)) // (num_hands + 1)
+        
+        for idx, split_hand in enumerate(split_hands):
+            x_offset = base_offset + spacing + idx * (hand_width + spacing)
+            y_offset = 400  # Position for each split hand
+            
+            # Draw the split hand
+            display_hand(screen, split_hand, x_offset, y_offset, card_images, card_back)
+
+    pygame.display.flip()
+
+    # Main loop for dealer turn
     while True:
-        # calculate dealer total
         dealer_total = calculate_hand(dealer_hand, card_values)
 
-        # check for soft 17
+        # Check for soft 17 (dealer holds 17 with an Ace counted as 11)
         soft_17 = dealer_total == 17 and any(card[0] == 'A' and card_values[card[0]] == 11 for card in dealer_hand)
 
-        # causes dealer to hit on less than 17 or a 17 with an Ace
+        # Dealer hits on less than 17 or a soft 17 (Ace counted as 11)
         if dealer_total < 17 or soft_17:
             sounds.deal_sound()
             dealer_hand.append(deck.pop())
 
+            # Update the screen to show the dealer's hand
             screen.fill(table_color)
-            display_hand(screen, dealer_hand, 100, 100, card_images, card_back, hidden = False)
-            display_hand(screen, player_hand, 100, 400, card_images, card_back)
-            pygame.time.wait(1000)
-            pygame.display.flip()
+            display_hand(screen, dealer_hand, 100, 100, card_images, card_back, hidden=False)
+
+
+
+            if split_hands:
+                # display split hands
+                for idx, split_hand in enumerate(split_hands):
+                    x_offset = base_offset + spacing + idx * (hand_width + spacing)
+                    y_offset = 400
+                    display_hand(screen, split_hand, x_offset, y_offset, card_images, card_back)
             
-            pygame.time.wait(1000)
+            else:
+                # display the single hand
+                display_hand(screen, player_hand, 100, 400, card_images, card_back)                
+
+            pygame.display.flip()
+            pygame.time.wait(1000)  # Wait between dealer's moves
 
         else:
-            break
+            break  # Dealer stops when they have 17 or higher
 
 def split(player_hand, deck):
     # function splits the player's hand into two if the cards are the same value
