@@ -1,11 +1,14 @@
 import pygame
+# contains betting logic
 import betting
+# contains bankrupt logic
 import br
+# contains logic to deal hands and calculate totals
 import hands
-import sh
+# contains sound effects and music for game
 import sounds
 
-# main game loop to minimize code on screen
+# main game loop to minimize code in game.py
 def main_game(screen, state, width, height, table_color, values, suits, card_values, card_images, card_back):
 
     # initializing betting values
@@ -25,28 +28,30 @@ def main_game(screen, state, width, height, table_color, values, suits, card_val
     
     # check if the player has Blackjack
     if hands.calculate_hand(player_hand, card_values) == 21:
-        results = ["Blackjack! You Win!"]
-        state['total'] += int(total_bet * 1.5)  # payout is usually 1.5 times the bet
-        game_over = True
-        player_turn = False
+            results = ["Blackjack! You Win!"]
+            state['total'] += int(total_bet * 1.5)  # payout is usually 1.5 times the bet
+            game_over = True
+            player_turn = False
 
-        # display end screen
-        end_screen = pygame.Surface((width, height))
-        end_screen.fill(table_color)
-        screen.blit(end_screen, (0,0))
+            # display end screen
+            end_screen = pygame.Surface((width, height))
+            end_screen.fill(table_color)
+            screen.blit(end_screen, (0,0))
 
-        hands.display_hand(screen, player_hand, 100, 400, card_images, card_back)
+            # display the hand
+            hands.display_hand(screen, player_hand, 100, 400, card_images, card_back)
 
-        for idx, result in enumerate(results):
-            pygame.time.delay(1500)
-            hands.result_screen(results, result, screen, width, height, table_color, state)
+            # the delay allows the player to see that they got a Blackjack instead of just adding to their total
+            pygame.time.delay(2000)
 
-        pygame.display.flip()
-        # the delay allows the player to see that they got a Blackjack instead of just adding to their total
-        pygame.time.delay(2000)
-        return
+            for idx, result in enumerate(results):
+                pygame.time.delay(1500)
+                hands.result_screen(results, result, screen, width, height, table_color, state)
 
-    
+            pygame.display.flip()
+            return
+
+
     # use different variables to tell which stages you are in in the game
     player_turn = True
     game_over = False
@@ -100,6 +105,7 @@ def main_game(screen, state, width, height, table_color, values, suits, card_val
 
         # displays a bankrupt screen when the player's total reaches 0
         elif bankrupt:
+
             # display a bankrupt screen
             sounds.game_over()
             br.bankrupt_screen(width, height, table_color, screen)
@@ -108,13 +114,16 @@ def main_game(screen, state, width, height, table_color, values, suits, card_val
         # after the game ends, show the results of the game
         else:
             if not result_processed:
+                # list so the results can be stored here from the split and normal hands
                 results = []
 
+                # outcomes for split hands logic
                 if split_mode:
                     for idx, split_hand in enumerate(split_hands):
                         player_total = hands.calculate_hand(split_hand, card_values)
                         dealer_total = hands. calculate_hand(dealer_hand, card_values)
 
+                        # outcomes of game
                         if player_total > 21:
                             results.append(f"Hand {idx+1}: Bust! Dealer wins.")
                             state['total'] -= total_bet
@@ -144,6 +153,7 @@ def main_game(screen, state, width, height, table_color, values, suits, card_val
                     player_total = hands.calculate_hand(player_hand, card_values)
                     dealer_total = hands.calculate_hand(dealer_hand, card_values)
                     
+                    # outcomes of game
                     if player_total > 21:
                         results.append("Bust! Dealer wins.")
                         state['total'] -= total_bet
@@ -166,6 +176,7 @@ def main_game(screen, state, width, height, table_color, values, suits, card_val
 
 
                 if game_over and not result_processed:
+                    # fills the screen with table color so cards don't show through the results screen
                     end_screen = pygame.Surface((width, height))
                     end_screen.fill(table_color)
                     screen.blit(end_screen, (0,0))
@@ -185,11 +196,13 @@ def main_game(screen, state, width, height, table_color, values, suits, card_val
                 pygame.quit()
                 exit()
 
+            # key functions for player when it is their turn
             if player_turn and not game_over:
                 if event.type == pygame.KEYDOWN:
-                    # this is to hit and gain a card for your hand
+                    # this is to hit and gain a card for your hand, makes a sound when you hit
                     if event.key == pygame.K_h: 
                         sounds.deal_sound()
+                        # logic for split hands
                         if split_mode:
                             split_hands[current_hand_index].append(deck.pop())
                             if hands.calculate_hand(split_hands[current_hand_index], card_values) > 21:
@@ -197,6 +210,7 @@ def main_game(screen, state, width, height, table_color, values, suits, card_val
                                 if current_hand_index >= len(split_hands):
                                     player_turn = False
                         else:
+                            # logic for one hand
                             player_hand.append(deck.pop())
                             if hands.calculate_hand(player_hand, card_values) > 21:
                                 player_turn = False
@@ -206,11 +220,12 @@ def main_game(screen, state, width, height, table_color, values, suits, card_val
                                 # shows the card you busted on
                                 hands.display_hand(screen, player_hand, 100, 400, card_images, card_back)
                                 hands.display_hand(screen, dealer_hand, 100, 100, card_images, card_back, hidden=True)  # Show dealer's face-down card
-                                pygame.display.flip()
-                                pygame.time.delay(1000)
+                                pygame.display.update()
+
 
                     # this is to stop drawing cards and keep your hand.
                     elif event.key == pygame.K_s:
+                        # split mode logic
                         if split_mode:
                             current_hand_index += 1
                             # Check if the current hand is done
@@ -218,6 +233,7 @@ def main_game(screen, state, width, height, table_color, values, suits, card_val
                                 player_turn = False
                                 hands.display_hand(screen, dealer_hand, 100, 100, card_images, card_back, hidden=player_turn)
                         else:
+                            # one hand logic
                             player_turn = False
                             hands.display_hand(screen, dealer_hand, 100, 100, card_images, card_back, hidden=player_turn)
 
@@ -230,6 +246,7 @@ def main_game(screen, state, width, height, table_color, values, suits, card_val
                                 split_hands = [hand1, hand2]
                                 split_mode = True
 
+                    # this is to double your bet (double down) and double your total bet
                     elif event.key == pygame.K_d:
                         if len(player_hand) ==2 and not split_mode:
                             if state['total'] >= total_bet:
@@ -247,8 +264,10 @@ def main_game(screen, state, width, height, table_color, values, suits, card_val
                                 pygame.time.delay(1000)
                             
                             else:
+                                # to debug the game
                                 print("Not enough chips to double down.")
 
+            # the key functions on the results screen
             if game_over and event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_r:
                     running = False
@@ -256,6 +275,7 @@ def main_game(screen, state, width, height, table_color, values, suits, card_val
                     pygame.quit()
                     exit()
         
+        # this is for the dealer to draw cards
         if not player_turn and not game_over:
             hands.dealer_turn(screen, dealer_hand, player_hand, deck, card_images, card_back, table_color, card_values, split_hands, width)
             

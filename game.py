@@ -7,6 +7,7 @@ import sounds
 # contain game code
 import mg
 
+
 # Initialize variables of game
 width = 1000
 height = 600
