@@ -38,7 +38,7 @@ for suit in suits:
 # define card values to determine score during game
 card_values = {'2': 2, '3': 3, '4': 4, '5': 5, '6': 6, '7': 7, '8': 8, '9': 9, '10': 10, 'A': 11, 'J': 10, 'Q': 10, 'K': 10}
 
-
+# main game loop to minimize code on screen
 def main_game(screen, state):
 
     # initializing betting values
@@ -49,7 +49,7 @@ def main_game(screen, state):
     # initializing background
     background = hands.build_background(width, height, table_color)
 
-    # set up game
+    # set up game, recreates a deck after every hand so you cannot count cards or run out of cards
     deck = hands.create_deck(values, suits)
     player_hand = [deck.pop(), deck.pop()]
     dealer_hand = [deck.pop(), deck.pop()]
@@ -57,7 +57,6 @@ def main_game(screen, state):
     current_hand_index = 0
     
     # check if the player has Blackjack
-    
     if hands.calculate_hand(player_hand, card_values) == 21:
         results = ["Blackjack! You Win!"]
         state['total'] += int(total_bet * 1.5)  # payout is usually 1.5 times the bet
@@ -260,6 +259,20 @@ def main_game(screen, state):
                             if hand1 and hand2:
                                 split_hands = [hand1, hand2]
                                 split_mode = True
+
+                    elif event.key == pygame.K_d:
+                        if len(player_hand) ==2 and not split_mode:
+                            if state['total'] >= total_bet:
+                                total_bet *= 2
+                                state['total'] -= total_bet // 2
+
+                                player_hand.append(deck.pop())
+
+                                player_turn = False
+                                game_over = hands.calculate_hand(player_hand, card_values) > 21
+                            
+                            else:
+                                print("Not enough chips to double down.")
 
             if game_over and event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_r:
