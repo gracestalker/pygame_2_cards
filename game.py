@@ -90,6 +90,10 @@ def main_game(screen, state):
     running = True
     while running:
 
+        if state['total'] <= 0:
+            bankrupt = True
+            game_over = True
+
 
         if not game_over and not bankrupt:
             # starting the background from the top of the screen
