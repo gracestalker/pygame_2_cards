@@ -56,7 +56,7 @@ def calculate_hand(hand, card_values):
         aces -= 1
     return total
 
-def result_screen(result, screen, width, height, table_color, state):
+def result_screen(results, result, screen, width, height, table_color, state):
 
     # variables
     play_f = "assets/fonts/play_again.ttf"
@@ -65,20 +65,34 @@ def result_screen(result, screen, width, height, table_color, state):
     font2 = pygame.font.Font(info_f, 36)
     result_surface = font2.render(result, True, (255,255,255))
 
-    screen.blit(result_surface, (width // 2 - result_surface.get_width() // 2, height // 3 - 20))
+    # clear screen with background color
+    screen.fill(table_color)
 
-    restart_text = font1.render("Play again", True, (255,255,255))
-    restart_info = font2.render("Press [R] to redeal  Press [Q] to quit", True, (255,255,255))
-    total_info = font2.render(f"Total = {state['total']}", True, (255,255,255))
+    # spacings for results
+    y_offset = height // 4
+    line_spacing = 50
 
-    # draw a rectangle for the restart screen
+    for idx, result in enumerate(results):
+        result_surface = font2.render(result, True, (255, 255, 255))
+        screen.blit(result_surface, (width // 2 - result_surface.get_width() // 2, y_offset))
+        y_offset += line_spacing
+
+    # player total
+    total_info = font2.render(f"Total = {state['total']}", True, (255, 255, 255))
+    screen.blit(total_info, (width // 2 - total_info.get_width() // 2, y_offset + 20))
+
+    # how to play again or quit
+    restart_text = font1.render("Play again", True, (255, 255, 255))
+    restart_info = font2.render("Press [R] to Redeal  Press [Q] to Quit", True, (255, 255, 255))
+
     text_width, text_height = restart_text.get_size()
     rect_x = (width - text_width) // 2
-    rect_y = (height // 2) + 50
-    pygame.draw.rect(screen, (table_color), (rect_x - 10, rect_y - 10, text_width + 20, text_height + 20))
-    screen.blit(restart_text, (rect_x,rect_y-100))
+    rect_y = y_offset + 100
+
+    # Draw a rectangle for the restart section
+    pygame.draw.rect(screen, table_color, (rect_x - 10, rect_y - 10, text_width + 20, text_height + 20))
+    screen.blit(restart_text, (rect_x, rect_y - 100))
     screen.blit(restart_info, (width // 5 + 30, rect_y + 50))
-    screen.blit(total_info, (width // 3 + 85, rect_y + 100))
 
     pygame.display.update()
 
