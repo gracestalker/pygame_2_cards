@@ -8,6 +8,8 @@ from titlescreen import title_screen
 import betting
 # contains music/sound effects for game
 import sounds
+# contains bankrupt logic
+import br
 
 
 # Initialize variables of game
@@ -71,9 +73,11 @@ def main_game(screen, state):
         hands.display_hand(screen, player_hand, 100, 400, card_images, card_back)
 
         for idx, result in enumerate(results):
+            pygame.time.delay(1500)
             hands.result_screen(results, result, screen, width, height, table_color, state)
 
         pygame.display.flip()
+        # the delay allows the player to see that they got a Blackjack instead of just adding to their total
         pygame.time.delay(2000)
         return
 
@@ -85,15 +89,16 @@ def main_game(screen, state):
     split_mode = False
     bankrupt = False
 
-
+    # main while loop for game
     running = True
     while running:
 
+        # allows the player to go bankrupt and not get stuck on the betting screen
         if state['total'] <= 0:
             bankrupt = True
             game_over = True
 
-
+        # blits background to start the game
         if not game_over and not bankrupt:
             # starting the background from the top of the screen
             screen.blit(background, (0, 0))
@@ -102,16 +107,20 @@ def main_game(screen, state):
             # deal hands to player and dealer in their spots
             hands.display_hand(screen, dealer_hand, 100, 100, card_images, card_back, hidden=player_turn and not game_over)
 
+            # if the player has two of the same cards, they can split it
             if split_mode:
 
+                # variables for split loops
                 num_hands = len(split_hands)
                 hand_width = 350
                 base_offset = -200
                 spacing = (width - (num_hands * hand_width)) // (num_hands + 1)
 
+                # loop to make the two hands split and center so there is room to gain more cards
                 for idx, split_hand in enumerate(split_hands):
                     x_offset = base_offset + spacing + idx * (hand_width + spacing)
                     y_offset = 400
+                    # allows for the rectangle with the card to change colors based on what hand you are on
                     color = (0,255,0) if idx == current_hand_index else (255, 255, 255)
 
                     # draw a rectangle around the active hand
@@ -121,37 +130,13 @@ def main_game(screen, state):
 
 
             else:  
-                # display normal hand              
+                # display player hand that isn't split             
                 hands.display_hand(screen, player_hand, 100, 400, card_images, card_back)
 
         # displays a bankrupt screen when the player's total reaches 0
         elif bankrupt:
             # display a bankrupt screen
-            end_screen = pygame.Surface((width, height))
-            end_screen.fill((table_color))
-
-            # load font
-            info_f = "assets/fonts/game_text.ttf"
-            font2 = pygame.font.Font(info_f, 80)
-            font3 = pygame.font.Font(info_f, 36)
-
-            # render text
-            br = font2.render("The House always wins...", True, (255,255,255))
-            instr = font3.render("Press [Q] to Quit", True, (255,255,255))
-
-            # display the messages on the screen
-            screen.blit(end_screen, (0,0))
-            screen.blit(br, (width // 2 - br.get_width() // 2, height // 3))
-            screen.blit(instr, (width // 2 - instr.get_width() // 2, height // 2 + 100))
-
-            # event handling for quitting the bankrupt screen
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    pygame.quit()
-                    exit()
-                if event.type == pygame.KEYDOWN and event.key == pygame.K_q:
-                    pygame.quit()
-                    exit()
+            br.bankrupt_screen(width, height, table_color, screen)
 
 
         # after the game ends, show the results of the game
@@ -209,6 +194,7 @@ def main_game(screen, state):
                     screen.blit(end_screen, (0,0))
                     
                     for idx, result in enumerate(results):
+                        pygame.time.delay(1500)
                         hands.result_screen(results, result, screen, width, height, table_color, state)
                         pygame.display.flip()
 
@@ -264,7 +250,6 @@ def main_game(screen, state):
                         if len(player_hand) ==2 and not split_mode:
                             if state['total'] >= total_bet:
                                 total_bet *= 2
-                                state['total'] -= total_bet // 2
 
                                 player_hand.append(deck.pop())
 
@@ -282,7 +267,8 @@ def main_game(screen, state):
                     exit()
         
         if not player_turn and not game_over:
-            hands.dealer_turn(screen, dealer_hand, deck, card_images, card_back, table_color, card_values)
+            hands.dealer_turn(screen, dealer_hand, player_hand, deck, card_images, card_back, table_color, card_values)
+            
             game_over = True
 
         pygame.display.flip()

@@ -98,14 +98,14 @@ def result_screen(results, result, screen, width, height, table_color, state):
 
 
 # plays out dealer's turn so you can see what their turn looks like
-def dealer_turn(screen, dealer_hand, deck, card_images, card_back, table_color, card_values):
+def dealer_turn(screen, dealer_hand, player_hand, deck, card_images, card_back, table_color, card_values):
 
     while True:
         # calculate dealer total
         dealer_total = calculate_hand(dealer_hand, card_values)
 
         # check for soft 17
-        soft_17 = dealer_total == 17 and any(card[0] == 'A' and card_values[card] == 11 for card in dealer_hand)
+        soft_17 = dealer_total == 17 and any(card[0] == 'A' and card_values[card[0]] == 11 for card in dealer_hand)
 
         # causes dealer to hit on less than 17 or a 17 with an Ace
         if dealer_total < 17 or soft_17:
@@ -114,6 +114,7 @@ def dealer_turn(screen, dealer_hand, deck, card_images, card_back, table_color, 
 
             screen.fill(table_color)
             display_hand(screen, dealer_hand, 100, 100, card_images, card_back, hidden = False)
+            display_hand(screen, player_hand, 100, 400, card_images, card_back)
             pygame.time.wait(1000)
             pygame.display.flip()
             
