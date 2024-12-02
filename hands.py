@@ -58,9 +58,7 @@ def calculate_hand(hand, card_values):
 
 def result_screen(result, screen, width, height, table_color, state):
 
-
     # variables
-
     play_f = "assets/fonts/play_again.ttf"
     info_f = "assets/fonts/game_text.ttf"
     font1 = pygame.font.Font(play_f, 100)

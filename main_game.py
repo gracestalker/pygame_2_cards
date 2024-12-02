@@ -1,40 +1,9 @@
 import pygame
-import os
 import hands
-from titlescreen import title_screen
 import betting
 import sounds
 
-
-# Initialize variables of game
-width = 1000
-height = 600
-table_color = (53, 101, 77)
-card_back = pygame.image.load('assets/kenney_boardgame-pack/PNG/Cards/cardBack_red5.png')
-title_color = (0, 0, 255)
-
-
-# create a dictionary for the images to be loaded into the game
-card_images = {}
-suits = ['clubs', 'diamonds', 'hearts', 'spades']
-values = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'A', 'J', 'Q', 'K']
-
-# loop for images instead of creating each individual card variable
-for suit in suits:
-    for value in values:
-        image_path = os.path.join('assets', 'kenney_boardgame-pack', 'PNG', 'Cards', f"card{suit.title()}{value}.png")
-        if os.path.exists(image_path):
-            card_images[(value, suit.title())] = pygame.image.load(image_path)
-        # this debugs the game so it doesn't crash
-        else:
-            print(f"Missing image: {image_path}")
-
-# define card values to determine score during game
-card_values = {'2': 2, '3': 3, '4': 4, '5': 5, '6': 6, '7': 7, '8': 8, '9': 9, '10': 10, 'A': 11, 'J': 10, 'Q': 10, 'K': 10}
-
-
-
-def main_game(screen, state):
+def main_game(screen, state, width, height, values, suits, table_color, card_values, card_images, card_back):
 
     # initializing betting values
     chip_values = [10, 50, 100, 500]
@@ -50,21 +19,30 @@ def main_game(screen, state):
     dealer_hand = [deck.pop(), deck.pop()]
     split_hands = []
     current_hand_index = 0
+    
+    # check if the player has Blackjack
+    
+    if hands.calculate_hand(player_hand, card_values) == 21:
+        end_screen = pygame.Surface((width, height))
+        end_screen.fill(table_color)
+        screen.blit(end_screen, (0,0))
 
+        result = "Blackjack! You win!"
+        state['total'] += int(total_bet * 1.5)  # Payout is usually 1.5 times the bet
+        game_over = True
+        player_turn = False
+        hands.display_hand(screen, player_hand, 100, 400, card_images, card_back)
+        hands.result_screen(result, screen, width, height, table_color, state)
+        pygame.time.delay(2000)
+        return
+
+    
     # use different variables to tell which stages you are in in the game
     player_turn = True
     game_over = False
     result_processed = False
     split_mode = False
     bankrupt = False
-
-    # check if the player has Blackjack
-    if hands.calculate_hand(player_hand, card_values) == 21:
-        result = "Blackjack! You win!"
-        state['total'] += int(total_bet * 1.5)  # Payout is usually 1.5 times the bet
-        hands.result_screen(result, screen, width, height, table_color, state)
-        pygame.display.flip()
-        return
 
 
     running = True
@@ -75,15 +53,9 @@ def main_game(screen, state):
             # starting the background from the top of the screen
             screen.blit(background, (0, 0))
 
-            hands.display_hand(screen, player_hand, 100, 400, card_images, card_back)
+            hands.display_hand(screen, dealer_hand, 100, 100, card_images, card_back, hidden = player_turn and not game_over)
 
             if split_mode:
-                hands.display_hand(screen, dealer_hand, 100, 100, card_images, card_back, hidden = True)
-            else:
-                hands.display_hand(screen, dealer_hand, 100, 100, card_images, card_back, hidden = player_turn)
-    
-            if split_mode:
-
                 num_hands = len(split_hands)
                 hand_width = 300
                 base_offset = -200
@@ -188,17 +160,9 @@ def main_game(screen, state):
                     end_screen.fill(table_color)
                     screen.blit(end_screen, (0,0))
                     
-                    start_y = height // 3
-                    line_spacing = 50
                     for idx, result in enumerate(results):
-                        result_text = font2.render(result, True, (255,255,255))
-                        text_x = (width - result_text.get_width()) // 2
-                        text_y = start_y + idx * line_spacing
-                        screen.blit(result_text, (text_x, text_y))
-
-                    instr_text = font2.render("Press [R] to Redeal or [Q] to Quit", True, (255,255,255))
-                    screen.blit(instr_text, ((width - instr_text.get_width()) // 2, start_y + len(results) * line_spacing + 20))
-                    pygame.display.flip()
+                        hands.result_screen(result, screen, width, height, table_color, state)
+                        pygame.display.flip()
 
                     # results screen
                     result_processed = True
@@ -230,9 +194,12 @@ def main_game(screen, state):
                     # this is to stop drawing cards and keep your hand.
                     elif event.key == pygame.K_s:
                         if split_mode:
-                            current_hand_index += 1  # Move to the next hand
+                            # Check if the current hand is done
+                            if hands.calculate_hand(split_hands[current_hand_index], card_values) > 21:
+                                current_hand_index += 1  # Move to the next hand
                             if current_hand_index >= len(split_hands):  # All hands have been played
                                 player_turn = False
+
                         else:
                             player_turn = False
                     
@@ -256,29 +223,3 @@ def main_game(screen, state):
             game_over = True
 
         pygame.display.flip()
-
-
-
-# game loop to help shorten code
-def main(result=''):
-
-    state = {'total': 1500}
-
-    pygame.init()
-    pygame.mixer.init()
-    sounds.background_music()
-    screen = pygame.display.set_mode((width, height))
-    # caption means game title at the top of the screen
-    pygame.display.set_caption("Blackjack")
-
-    # title screen loop
-    show_game = title_screen(screen, result, state, width, height)
-    if show_game:
-        while True:
-            main_game(screen, state)
-            # start main game
-    pygame.quit()
-
-# Run the game
-if __name__ == "__main__":
-    main()
