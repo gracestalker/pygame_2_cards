@@ -31,15 +31,19 @@ def instructions(screen, width, height):
     inst_surface = pygame.Surface((width, height))
     inst_surface.fill(table_color)
 
+    # using get_rect() to allow the text to center on its own rather than hard coding it
+
     # welcome screen
-    inst_surface.blit(welcome, (width // 2 - 175, 75))
+    welcome_rect = welcome.get_rect(center=(width // 2, 75))
+    inst_surface.blit(welcome, welcome_rect)
 
     screen.blit(inst_surface, (0,0))
     pygame.display.flip()
     pygame.time.delay(2000) 
 
     # blackjack screen
-    inst_surface.blit(blj, (width // 2 - 470, 225))
+    blj_rect = blj.get_rect(center=(width // 2, 225))
+    inst_surface.blit(blj, blj_rect)
 
     screen.blit(inst_surface, (0,0))
     pygame.display.flip()
@@ -48,13 +52,26 @@ def instructions(screen, width, height):
     inst_surface.fill(table_color)
 
     # instructions screen
-    inst_surface.blit(inst, (width // 2 - 200, 50))
-    inst_surface.blit(und, (0, 100))
-    inst_surface.blit(b_inst, (width // 2 - 250, 200))
-    inst_surface.blit(h_inst, (width // 2 - 180, 275))   
-    inst_surface.blit(s_inst, (width // 2 - 200, 350))
-    inst_surface.blit(f_inst, (width // 2 - 195, 425))
-    inst_surface.blit(d_inst, (width // 2 - 270, 500))
+    inst_rect = inst.get_rect(center=(width // 2, 50))
+    inst_surface.blit(inst, inst_rect)
+
+    und_rect = inst.get_rect(center=(0, 100))
+    inst_surface.blit(und, und_rect)    
+
+    b_inst_rect = inst.get_rect(center=(width // 2, 200))
+    inst_surface.blit(b_inst, b_inst_rect)
+
+    h_inst_rect = inst.get_rect(center=(width // 2, 275))
+    inst_surface.blit(h_inst, h_inst_rect) 
+
+    s_inst_rect = inst.get_rect(center=(width // 2, 350))
+    inst_surface.blit(s_inst, s_inst_rect)
+
+    f_inst_rect = inst.get_rect(center=(width // 2, 425))
+    inst_surface.blit(f_inst, f_inst_rect)
+
+    d_inst_rect = inst.get_rect(center=(width // 2, 500))
+    inst_surface.blit(d_inst, d_inst_rect)
 
     screen.blit(inst_surface, (0,0))
     pygame.display.flip()
