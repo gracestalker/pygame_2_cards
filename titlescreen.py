@@ -14,8 +14,8 @@ def instructions(screen, width, height):
     font3 = pygame.font.Font(info_f, 75)
 
 
-    welcome = font3.render("Welcome to", True, black)
-    blj = font1.render("BLACKJACK", True, black)
+    welcome = font3.render("Welcome to", True, white)
+    blj = font1.render("BLACKJACK", True, white)
     b_inst = font2.render("Click the Chips to Bet!", True, white)
     h_inst = font2.render("Press [H] to Hit", True, white)
     s_inst = font2.render("Press [S] to Stand", True, white)

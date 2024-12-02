@@ -1,8 +1,12 @@
 import pygame
 import os
+# contains logic for calculating and dealing hands
 import hands
+# contains logic for the titlescreen and instructions
 from titlescreen import title_screen
+# contains logic for betting
 import betting
+# contains music/sound effects for game
 import sounds
 
 
@@ -19,6 +23,7 @@ card_images = {}
 suits = ['clubs', 'diamonds', 'hearts', 'spades']
 values = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'A', 'J', 'Q', 'K']
 
+
 # loop for images instead of creating each individual card variable
 for suit in suits:
     for value in values:
@@ -29,9 +34,9 @@ for suit in suits:
         else:
             print(f"Missing image: {image_path}")
 
+
 # define card values to determine score during game
 card_values = {'2': 2, '3': 3, '4': 4, '5': 5, '6': 6, '7': 7, '8': 8, '9': 9, '10': 10, 'A': 11, 'J': 10, 'Q': 10, 'K': 10}
-
 
 
 def main_game(screen, state):
@@ -97,7 +102,7 @@ def main_game(screen, state):
             if split_mode:
 
                 num_hands = len(split_hands)
-                hand_width = 300
+                hand_width = 350
                 base_offset = -200
                 spacing = (width - (num_hands * hand_width)) // (num_hands + 1)
 
@@ -107,7 +112,7 @@ def main_game(screen, state):
                     color = (0,255,0) if idx == current_hand_index else (255, 255, 255)
 
                     # draw a rectangle around the active hand
-                    rect = pygame.Rect(x_offset - 15, y_offset - 20, hand_width, 140)
+                    rect = pygame.Rect(x_offset + 250, y_offset - 20, hand_width, 140)
                     pygame.draw.rect(screen, color, rect, border_radius = 15, width = 3)
                     hands.display_hand(screen, split_hand, x_offset, y_offset, card_images, card_back)
 
