@@ -91,8 +91,8 @@ def result_screen(results, result, screen, width, height, table_color, state):
 
     # Draw a rectangle for the restart section
     pygame.draw.rect(screen, table_color, (rect_x - 10, rect_y - 10, text_width + 20, text_height + 20))
-    screen.blit(restart_text, (rect_x, rect_y - 100))
-    screen.blit(restart_info, (width // 5 + 30, rect_y + 50))
+    screen.blit(restart_text, (rect_x, rect_y))
+    screen.blit(restart_info, (width // 5 + 30, rect_y + 130))
 
     pygame.display.update()
 
@@ -105,7 +105,7 @@ def dealer_turn(screen, dealer_hand, deck, card_images, card_back, table_color, 
         dealer_total = calculate_hand(dealer_hand, card_values)
 
         # check for soft 17
-        soft_17 = dealer_total == 17 and any(card[0] == 'A' for card in card_values)
+        soft_17 = dealer_total == 17 and any(card[0] == 'A' and card_values[card] for card in dealer_hand)
 
         # causes dealer to hit on less than 17 or a 17 with an Ace
         if dealer_total < 17 or soft_17:

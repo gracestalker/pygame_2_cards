@@ -16,10 +16,10 @@ def instructions(screen, width, height):
 
     welcome = font3.render("Welcome to", True, black)
     blj = font1.render("BLACKJACK", True, black)
-    b_inst = font2.render("Click the Chips to Bet!", True, black)
-    h_inst = font2.render("Press [H] to Hit", True, black)
-    s_inst = font2.render("Press [S] to Stand", True, black)
-    f_inst = font2.render("Press [F] to Split", True, black)
+    b_inst = font2.render("Click the Chips to Bet!", True, white)
+    h_inst = font2.render("Press [H] to Hit", True, white)
+    s_inst = font2.render("Press [S] to Stand", True, white)
+    f_inst = font2.render("Press [F] to Split", True, white)
 
     inst_surface = pygame.Surface((width, height))
     inst_surface.fill((53, 101, 77))
