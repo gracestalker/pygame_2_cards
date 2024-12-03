@@ -32,11 +32,10 @@ def instructions(screen, width, height):
     inst_surface.fill(table_color)
 
     # using get_rect() to allow the text to center on its own rather than hard coding it
-
     # welcome screen
     welcome_rect = welcome.get_rect(center=(width // 2, 75))
     inst_surface.blit(welcome, welcome_rect)
-
+    # blit onto screen
     screen.blit(inst_surface, (0,0))
     pygame.display.flip()
     pygame.time.delay(2000) 
@@ -44,35 +43,44 @@ def instructions(screen, width, height):
     # blackjack screen
     blj_rect = blj.get_rect(center=(width // 2, 225))
     inst_surface.blit(blj, blj_rect)
-
+    # blit onto screen
     screen.blit(inst_surface, (0,0))
     pygame.display.flip()
     pygame.time.delay(2000)
 
+    # fill in the surface so the instructions have their own screen
     inst_surface.fill(table_color)
 
     # instructions screen
+    #instructions
     inst_rect = inst.get_rect(center=(width // 2, 50))
     inst_surface.blit(inst, inst_rect)
 
+    # line under instructions
     und_rect = inst.get_rect(center=(0, 100))
-    inst_surface.blit(und, und_rect)    
+    inst_surface.blit(und, und_rect)
 
+    # betting instructions
     b_inst_rect = inst.get_rect(center=(width // 2, 200))
     inst_surface.blit(b_inst, b_inst_rect)
 
+    # hit instructions
     h_inst_rect = inst.get_rect(center=(width // 2, 275))
-    inst_surface.blit(h_inst, h_inst_rect) 
+    inst_surface.blit(h_inst, h_inst_rect)
 
+    # stand instructions
     s_inst_rect = inst.get_rect(center=(width // 2, 350))
     inst_surface.blit(s_inst, s_inst_rect)
 
+    # split instructions
     f_inst_rect = inst.get_rect(center=(width // 2, 425))
     inst_surface.blit(f_inst, f_inst_rect)
 
+    # double down instructions
     d_inst_rect = inst.get_rect(center=(width // 2, 500))
     inst_surface.blit(d_inst, d_inst_rect)
 
+    # blit onto and flip the screen
     screen.blit(inst_surface, (0,0))
     pygame.display.flip()
     pygame.time.delay(6000)
@@ -81,6 +89,7 @@ def instructions(screen, width, height):
 # function for my title screen to start the game
 def title_screen(screen, result, state, width, height):
 
+    # putting instructions function onto the title screen so they show before the 'START' and 'X' buttons
     instructions(screen, width, height)
 
     # initialize images used on title screen
@@ -101,12 +110,13 @@ def title_screen(screen, result, state, width, height):
     quit_button = buttons.Button(900, 0, quit_image)
     blackjack_logo = buttons.Button(315, 50, blackjack_logo)
 
-
+    # loop to run the title screen
     run = True
     while run:
 
         screen.fill((53, 101, 77))
 
+        # draw functions from buttons.py
         if start_button.draw(screen):
             print('START')
             return True

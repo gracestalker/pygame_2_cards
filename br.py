@@ -2,6 +2,9 @@ import pygame
 
 # displays a bankrupt screen if the player's total reaches 0
 def bankrupt_screen(width, height, table_color, screen):
+    
+    # initialize variables
+    white = (255,255,255)
     end_screen = pygame.Surface((width, height))
     end_screen.fill((table_color))
 
@@ -11,8 +14,8 @@ def bankrupt_screen(width, height, table_color, screen):
     font3 = pygame.font.Font(info_f, 36)
 
     # render text
-    br = font2.render("The House always wins...", True, (255,255,255))
-    instr = font3.render("Press [Q] to Quit", True, (255,255,255))
+    br = font2.render("The House always wins...", True, white)
+    instr = font3.render("Press [Q] to Quit", True, white)
 
     # display the messages on the screen
     screen.blit(end_screen, (0,0))
@@ -24,6 +27,7 @@ def bankrupt_screen(width, height, table_color, screen):
         if event.type == pygame.QUIT:
             pygame.quit()
             exit()
+        # you can only quit the game, there is no restart. Allows for you to go through the whole game again with new money.
         if event.type == pygame.KEYDOWN and event.key == pygame.K_q:
             pygame.quit()
             exit()

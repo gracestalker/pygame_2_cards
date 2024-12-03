@@ -1,6 +1,6 @@
 import pygame
-import sounds
 
+# function for betting screen and actually betting
 def betting(screen, state, chip_values, width, height, table_color):
 
     # initializing variables
@@ -25,6 +25,7 @@ def betting(screen, state, chip_values, width, height, table_color):
         rect = pygame.Rect(chip_x + i * 100 - 75, chip_y - 5, 80, 80)
         chip_rects.append((rect, value))
 
+    # main loop for betting
     betting = True
     while betting:
         # background for betting screen
@@ -57,6 +58,7 @@ def betting(screen, state, chip_values, width, height, table_color):
                 pygame.font.quit
                 exit()
 
+            # if you click on/collide with the chips with your mouse it will initiate that bet
             if event.type == pygame.MOUSEBUTTONDOWN:
                 mouse_pos = pygame.mouse.get_pos()
                 for rect, value in chip_rects:

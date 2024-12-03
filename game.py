@@ -1,4 +1,5 @@
 import pygame
+# to join the card images together
 import os
 # contains logic for the titlescreen and instructions
 from titlescreen import title_screen
