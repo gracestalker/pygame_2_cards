@@ -78,7 +78,7 @@ def result_screen(results, result, screen, width, height, table_color, state):
     line_spacing = 50
 
     # loop to create two outcomes if necessary for the results screen
-    for result in enumerate(results):
+    for idx, result in enumerate(results):
         result_surface = font2.render(result, True, (255, 255, 255))
         screen.blit(result_surface, (width // 2 - result_surface.get_width() // 2, y_offset))
         y_offset += line_spacing

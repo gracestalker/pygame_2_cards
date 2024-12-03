@@ -26,38 +26,20 @@ def main_game(screen, state, width, height, table_color, values, suits, card_val
     split_hands = []
     current_hand_index = 0
     
-    # check if the player has Blackjack
-    if hands.calculate_hand(player_hand, card_values) == 21:
-            results = ["Blackjack! You Win!"]
-            state['total'] += int(total_bet * 1.5)  # payout is usually 1.5 times the bet
-            game_over = True
-            player_turn = False
-
-            # display end screen
-            end_screen = pygame.Surface((width, height))
-            end_screen.fill(table_color)
-            screen.blit(end_screen, (0,0))
-
-            # display the hand
-            hands.display_hand(screen, player_hand, 100, 400, card_images, card_back)
-
-            # the delay allows the player to see that they got a Blackjack instead of just adding to their total
-            pygame.time.delay(2000)
-
-            for idx, result in enumerate(results):
-                pygame.time.delay(1500)
-                hands.result_screen(results, result, screen, width, height, table_color, state)
-
-            pygame.display.flip()
-            return
-
-
     # use different variables to tell which stages you are in in the game
     player_turn = True
     game_over = False
     result_processed = False
     split_mode = False
     bankrupt = False
+
+    # check if the player has Blackjack
+    if hands.calculate_hand(player_hand, card_values) == 21:
+            state['total'] += int(total_bet * 1.5)  # payout is usually 1.5 times the bet
+            hands.result_screen(["Blackjack! You Win!"], "Blackjack! You Win!", screen, width, height, table_color, state)
+            pygame.display.flip()
+            pygame.time.delay(3000)
+            return
 
     # main while loop for game
     running = True
